@@ -1,0 +1,99 @@
+body {
+    margin: 0 auto;
+    width: 800px;
+    padding: 1em;
+    border: 1px solid;
+}
+
+header {
+    padding-bottom: 60px;
+    border-bottom: 1px solid;
+}
+
+.login {
+    padding: 20px;
+}
+
+.logo img {
+    float: left;
+    width: 100px;
+}
+
+.login a {
+    float: right;
+}
+
+form.detail {
+    width: 700px;
+    padding: 20px;
+    margin: 20px;
+}
+
+.result {
+    width: 500px;
+    padding: 20px;
+    margin: 20px;
+    border: 1px solid;
+}
+
+form div {
+    padding: 10px;
+}
+
+form input, form textarea {
+    width: 300px;
+}
+
+form .submit {
+    padding: 10px;
+    margin: 10px;
+    float: left;
+}
+table {
+    width: 750px;
+}
+
+fieldset{
+    border: none;
+}
+
+table tr {
+    padding: 10px;
+}
+
+table td.right {
+    margin: auto;
+    float: right;
+    display: block;
+}
+
+.left {
+    float: left;
+}
+
+.right{
+    float: right;
+}
+
+error{
+    color: red;
+}
+
+.header{
+    border-bottom: 1px solid;
+}
+
+div.text p::first-letter{
+    color: red;
+    font-size: 150%;
+}
+
+li{
+    margin: 10px 0;
+}
+
+
+
+
+
+
