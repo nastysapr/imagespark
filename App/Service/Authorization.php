@@ -56,7 +56,7 @@ class Authorization
     public function greetings(): string
     {
         $sessionParams = $this->getSessionParams();
-        $user = new User($sessionParams['user_id']);
+        $user = (new User())->findByPK($sessionParams['user_id']);
         return $user->full_name;
     }
 
@@ -76,8 +76,8 @@ class Authorization
     {
         if ($this->check()) {
             $id = (new Authorization())->getUserId();
-            $user = new User($id);
-            if ($user->getRole() === $this::ROLE_ADMIN) {
+            $user = (new User)->findByPK($id);
+            if ($user->role === $this::ROLE_ADMIN) {
                 return true;
             }
         }

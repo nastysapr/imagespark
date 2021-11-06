@@ -9,20 +9,20 @@ return [
     ],
 
     'routes' => [
-        '/' => new Route(),
-        '/(?P<entity>users)' => new Route(UsersController::class, 'index', ['GET'], AdminMiddleware::class),
-        '/(?P<entity>users)/(?P<id>\d+)' => new Route(UsersController::class, 'read', ['GET'], AdminMiddleware::class),
-        '/(?P<entity>users)/(?P<id>\d+)/(?P<action>edit)' => new Route(UsersController::class, 'edit', ['GET', 'POST'], AdminMiddleware::class),
-        '/(?P<entity>users)/(?P<action>add)' => new Route(UsersController::class, 'edit', ['GET', 'POST'], AdminMiddleware::class),
-        '/(?P<entity>users)/(?P<id>\d+)/(?P<action>delete)' => new Route(UsersController::class, 'delete', ['GET'], AdminMiddleware::class),
-        '/(?P<entity>users)/(?P<id>\d+)/(?P<action>role)' => new Route(UsersController::class, 'role', ['GET'], AdminMiddleware::class),
+        '/(?P<section>)' => new Route(),
+        '/(?P<section>users)' => new Route(UsersController::class, 'index', ['GET'], AdminMiddleware::class),
+        '/(?P<section>users)/(?P<id>\d+)' => new Route(UsersController::class, 'read', ['GET'], AdminMiddleware::class),
+        '/(?P<section>users)/(?P<id>\d+)/(?P<action>edit)' => new Route(UsersController::class, 'edit', ['GET', 'POST'], AdminMiddleware::class),
+        '/(?P<section>users)/(?P<action>add)' => new Route(UsersController::class, 'edit', ['GET', 'POST'], AdminMiddleware::class),
+        '/(?P<section>users)/(?P<id>\d+)/(?P<action>delete)' => new Route(UsersController::class, 'delete', ['GET'], AdminMiddleware::class),
+        '/(?P<section>users)/(?P<id>\d+)/(?P<action>role)' => new Route(UsersController::class, 'switchRole', ['GET'], AdminMiddleware::class),
 
-        '/(?P<entity>news|articles)' => new Route(ContentController::class),
-        '/(?P<entity>news|articles)/(?P<id>\d+)' => new Route(ContentController::class, 'read', ['GET']),
-        '/(?P<entity>news|articles)/(?P<action>add)' => new Route(ContentController::class, 'edit', ['GET', 'POST'], UserMiddleware::class),
-        '/(?P<entity>news|articles)/(?P<id>\d+)/(?P<action>edit)' => new Route(ContentController::class, 'edit', ['GET', 'POST'], AdminMiddleware::class),
-        '/login' => new Route(AuthController::class, 'login', ['GET', 'POST']),
-        '/logout' => new Route(AuthController::class, 'logout', ['GET']),
+        '/(?P<section>news|articles)' => new Route(ContentController::class),
+        '/(?P<section>news|articles)/(?P<id>\d+)' => new Route(ContentController::class, 'read', ['GET']),
+        '/(?P<section>news|articles)/(?P<action>add)' => new Route(ContentController::class, 'edit', ['GET', 'POST'], UserMiddleware::class),
+        '/(?P<section>news|articles)/(?P<id>\d+)/(?P<action>edit)' => new Route(ContentController::class, 'edit', ['GET', 'POST'], AdminMiddleware::class),
+        '/(?P<section>login)' => new Route(AuthController::class, 'login', ['GET', 'POST']),
+        '/(?P<section>logout)' => new Route(AuthController::class, 'logout', ['GET']),
     ]
 ];
 

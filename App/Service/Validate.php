@@ -31,7 +31,7 @@ class Validate
         return $errors;
     }
 
-    public function article(array $data): array
+    public function articles(array $data): array
     {
         $errors = [];
         if (empty($data['title'])) {
@@ -55,6 +55,6 @@ class Validate
 
     public function news(array $data): array
     {
-        return $this->article($data);
+        return $this->articles($data);
     }
 }

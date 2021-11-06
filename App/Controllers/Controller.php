@@ -8,13 +8,10 @@ class Controller
     public $validate;
     public $auth;
     public int $limit = 10; //количество выводимых новостей/статей на странице
+
     public string $action;
-    public ?int $id = null;
-    public string $model;
-    public string $viewIndex;
-    public string $viewDetail;
-    public string $viewRedactor;
     public string $section;
+    public ?int $id = null;
 
     public function __construct(array $params)
     {
@@ -24,20 +21,8 @@ class Controller
         $this->validate = new Validate();
         $this->auth = new Authorization();
 
-        if (isset($params['id'])) {
-            $this->id = $params['id'];
-        }
-
-        if (isset($params['entity']) && $params['entity'] !== 'users') {
-            $this->viewIndex = $params['entity'] . '/index';
-            $this->viewRedactor = 'redactor';
-            $this->viewDetail = 'reader';
-            $this->section = $params['entity'];
-            $this->model = ucfirst($params['entity']);
-        }
-
-        if (isset($params['action'])) {
-            $this->action = $params['action'];
+        foreach ($params as $key => $value){
+            $this->$key = $value;
         }
     }
 
@@ -46,8 +31,12 @@ class Controller
      */
     public function read(): void
     {
-        $pageData['item'] = new $this->model($this->id);
-        $pageData['type'] = $this->model;
+        $item = (new $this->model)->findByPK($this->id);
+        if (!$item) {
+            $this->errors->notFound();
+        }
+        $pageData['item'] = $item;
+        $pageData['model'] = $this->model;
         $pageData['action'] = 'read';
 
         $this->view->render($this->viewDetail, $pageData);
@@ -58,7 +47,13 @@ class Controller
      */
     public function edit(): void
     {
-        $item = new $this->model($this->id);
+        $item = (new $this->model);
+        if ($this->id) {
+            $item = $item->findByPK($this->id);
+            if (!$item) {
+                $this->errors->notFound();
+            }
+        }
 
         $pageData['item'] = $item;
         $pageData['action'] = $this->action;
@@ -70,22 +65,22 @@ class Controller
             $validateMethod = strtolower($this->model);
             $errors = $this->validate->$validateMethod($pageData['form_data']);
 
+            $pageData['form_data']['password'] = password_hash($pageData['form_data']['password'], PASSWORD_BCRYPT);
+
             foreach ($pageData['form_data'] as $attribute => $value) {
                 $item->$attribute = $value;
             }
 
             if (empty($errors)) {
-                if (!$this->id) {
-                    $item->id = $item->calcId();
+                $item->id = $item->save();
+                if ($item->id) {
+                    $this->redirect($item->getUrl());
                 }
 
-                $item->save();
-                $this->redirect($item->getUrl());
+                echo 'Ошибка сохранения данных';
             }
-
         }
 
-        $pageData['entity'] = $item;
         $pageData['errors'] = $errors;
 
         $this->view->render($this->viewRedactor, $pageData);
@@ -96,8 +91,16 @@ class Controller
      */
     public function delete(): void
     {
-        (new $this->model($this->id))->delete();
-        $this->redirect(strtolower($this->section));
+        $item = (new $this->model)->findByPK($this->id);
+
+        if (!$item) {
+            $this->errors->notFound();
+        }
+
+        $item->id = $this->id;
+        $item->delete();
+
+        $this->redirect('/' . strtolower($this->section));
     }
 
     /**

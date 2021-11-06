@@ -3,12 +3,12 @@
 class MainController extends Controller
 {
     /**
-     * отображает главную страницу
+     * Отображает главную страницу
      */
     public function index(): void
     {
         $news = new News();
-        $pageData['news'] = $news->getGroup(1, 3);
+        $pageData['news'] = $news->findAll(1, 3, "date");
 
         $this->view->render('mainPage', $pageData);
     }

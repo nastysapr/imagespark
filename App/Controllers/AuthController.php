@@ -12,8 +12,10 @@ class AuthController extends Controller
         }
 
         $formData = $this->request->getFormData();
+
         if ($formData) {
             $user = (new User())->findAndAuth($formData);
+
             if ($user) {
                 $this->auth->login($user->id);
                 $this->redirect('/');
@@ -22,33 +24,13 @@ class AuthController extends Controller
             }
         }
 
-  //      $pageData = array_merge($pageData, $formData);
         $this->view->render('authorization', $formData);
-
-    }
-
-    /**
-     * Отображает форму авторизации
-     */
-    public function loginGET(): void
-    {
-
-    }
-
-    /**
-     * Проверяет аутентификационные данные, авторизовывает пользователя в случае успеха
-     */
-    public
-    function loginPOST(array $params)
-    {
-
     }
 
     /**
      * Выход пользователя из закрытой части
      */
-    public
-    function logout()
+    public function logout()
     {
         $this->auth->logout();
         $this->redirect('/');

@@ -2,7 +2,7 @@
 
 class DatabaseConnect
 {
-    private $dbh;
+    public $dbh;
     private static $instance;
 
     function __construct()
