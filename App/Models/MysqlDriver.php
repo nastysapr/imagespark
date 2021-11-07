@@ -2,26 +2,16 @@
 
 class MysqlDriver implements DriverInterface
 {
-    private $dbh;
-    private static $instance;
+    private PDO $dbh;
 
     public function __construct()
     {
         $connectParams = new Connect();
-
         try {
             $this->dbh = new PDO($connectParams->dsn, $connectParams->user, $connectParams->password);
         } catch (PDOException $ex) {
             die($ex->getMessage());
         }
-    }
-
-    public static function getInstance(): PDO
-    {
-        if (self::$instance === null) {
-            self::$instance = new DatabaseConnect();
-        }
-        return self::$instance->dbh;
     }
 
     /**
@@ -80,7 +70,7 @@ class MysqlDriver implements DriverInterface
         $sth = $this->dbh->prepare($sql);
         $sth->execute();
         $colomns = $sth->fetchAll(PDO::FETCH_COLUMN);
-        unset($colomns[array_search('id',$colomns)]);
+        unset($colomns[array_search('id', $colomns)]);
 
         $primaryKey = '';
 

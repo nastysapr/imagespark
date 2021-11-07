@@ -15,7 +15,6 @@ class Config
 
     public function __wakeup()
     {
-        throw new \Exception("Config is down");
     }
 
     public static function get(): self

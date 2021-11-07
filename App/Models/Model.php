@@ -2,14 +2,16 @@
 
 class Model
 {
-    public $driver;
-    public $attributes = [];
+    public static $driver;
+    public array $attributes = [];
     public string $table;
 
     public function __construct()
     {
-        $config = require __DIR__ . '/../../config/db_config.php';
-        $this->driver = new $config['driver']();
+        if (!self::$driver) {
+            $config = require __DIR__ . '/../../config/db_config.php';
+            self::$driver = new $config['driver']();
+        }
     }
 
     /**
@@ -44,7 +46,7 @@ class Model
         if (!$this->role) {
             $this->role = Authorization::ROLE_USER;
         }
-        return $this->driver->save($this);
+        return self::$driver->save($this);
     }
 
     /**
@@ -52,7 +54,7 @@ class Model
      */
     public function delete(): void
     {
-        $this->driver->deleteRecord($this);
+        self::$driver->deleteRecord($this);
     }
 
     /**
@@ -61,7 +63,7 @@ class Model
      */
     public function findAll(int $offset = 0, int $limit = 0, string $where = ''): array
     {
-        return $this->driver->findAll($this->table, get_called_class(), $where, $offset, $limit);
+        return self::$driver->findAll($this->table, get_called_class(), $where, $offset, $limit);
     }
 
     /**
@@ -69,7 +71,7 @@ class Model
      */
     public function findByPK(int $id): ?object
     {
-        return $this->driver->findRecordByPK($this->table, get_called_class(), $id);
+        return self::$driver->findRecordByPK($this->table, get_called_class(), $id);
     }
 
     /**
@@ -77,7 +79,7 @@ class Model
      */
     public function count(): int
     {
-        return $this->driver->count($this->table);
+        return self::$driver->count($this->table);
     }
 
     /**
