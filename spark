@@ -6,11 +6,13 @@ $longopts = [
     "name:",
     "count:",
     "migration:",
-    "param:"
+    "param:",
+    "seeder:"
 ];
 $options = getopt(0, $longopts);
 if (isset($options['name']) && !in_array($options['name'], ['news', 'articles']) ||
-    isset($options['migration']) && !in_array($options['migration'], ['create', 'rollback', 'migrate'])) {
+    isset($options['migration']) && !in_array($options['migration'], ['create', 'rollback', 'migrate']) ||
+    isset($options['seeder']) && $options['seeder'] !== 'seed') {
     echo 'Unexpected parameter';
 
     return 0;
@@ -29,6 +31,13 @@ if (isset($options['migration'])) {
     }
 
     (new Migration())->$method($param);
+}
+
+/**
+ * Вызов сидера
+ */
+if (isset($options['seeder'])) {
+    (new Seeder())->seed();
 }
 
 /**

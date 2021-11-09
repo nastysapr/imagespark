@@ -80,6 +80,11 @@ class Migration
             die;
         }
 
+        if ($params > (new MysqlDriver())->count('migrations_table')) {
+            echo "Error! Unexpected parameter";
+            die;
+        }
+
         for ($i = $params; $i > 0; $i--) {
             $migration = $this->getLastMigration();
             (new $migration())->down();
