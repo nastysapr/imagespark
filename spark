@@ -2,20 +2,43 @@
 require_once 'App/Autoloader.php';
 Autoloader::register();
 
-$longopts  = [
+$longopts = [
     "name:",
     "count:",
+    "migration:",
+    "param:"
 ];
 $options = getopt(0, $longopts);
-if (!in_array($options['name'], ['news', 'articles'])) {
-    echo 'First parameter is not supported';
+if (isset($options['name']) && !in_array($options['name'], ['news', 'articles']) ||
+    isset($options['migration']) && !in_array($options['migration'], ['create', 'rollback', 'migrate'])) {
+    echo 'Unexpected parameter';
 
     return 0;
 }
 
 $start = microtime(true);
-if (is_numeric($options['count']) && $options['count'] > 0) {
-    new ContentGenerator($options['name'], $options['count']);
+/**
+ * Миграция
+ * --migration=create --param=
+ */
+if (isset($options['migration'])) {
+    $method = $options['migration'];
+    $param = "";
+    if (isset($options['param'])) {
+        $param = $options['param'];
+    }
+
+    (new Migration())->$method($param);
+}
+
+/**
+ * Генератор контента
+ * --name=news --count=3000
+ */
+if (isset($options['name'])) {
+    if (is_numeric($options['count']) && $options['count'] > 0 && $options['name']) {
+        new ContentGenerator($options['name'], $options['count']);
+    }
 }
 $time = microtime(true) - $start;
 echo "Time: " . $time . "\n";

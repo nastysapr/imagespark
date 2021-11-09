@@ -11,6 +11,10 @@ Autoloader::register();
 
 session_start();
 
-new Router();
+//new Router();
 
+//(new Migration())->create('create_news');
+//(new Migration())->create('create_articles');
+
+(new Migration())->migrate();
 

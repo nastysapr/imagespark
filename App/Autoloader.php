@@ -8,6 +8,7 @@ class Autoloader
         __DIR__ . '/../App/Models/',
         __DIR__ . '/../App/Service/',
         __DIR__ . '/../App/Middleware/',
+        __DIR__ . '/../App/database/migrations/',
     ];
 
     public static function register()

@@ -2,7 +2,7 @@
 return [
     /** ['mysql', files] */
     'driver' => MysqlDriver::class,
-   // 'driver' => FilesDriver::class,
+    //  'driver' => FilesDriver::class,
     'mysql' => [
         'dsn' => 'mysql:dbname=ImageSpark;host=127.0.0.1;port=3306',
         'user' => 'dev',

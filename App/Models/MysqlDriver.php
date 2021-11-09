@@ -19,9 +19,10 @@ class MysqlDriver implements DriverInterface
      */
     public function findRecordByPK(string $table, string $model, int $id): ?object
     {
-        $sql = "SELECT * FROM " . $table . " WHERE id = " . $id;
+        $sql = "SELECT * FROM " . $table . " WHERE id = :id";
         $sth = $this->dbh->prepare($sql);
-        $sth->execute();
+        $sth->execute(["id" => $id]);
+
         $result = $sth->fetchObject($model);
         if ($result) {
             return $result;
@@ -74,24 +75,34 @@ class MysqlDriver implements DriverInterface
 
         $primaryKey = '';
 
-        if ($record->id) {
-            $sql = "UPDATE ";
-            $primaryKey = " WHERE id = " . $record->id;
-        } else {
-            $sql = "INSERT INTO ";
+        try {
+            $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->dbh->beginTransaction();
+
+            if ($record->id) {
+                $sql = "UPDATE ";
+                $primaryKey = " WHERE id = " . $record->id;
+            } else {
+                $sql = "INSERT INTO ";
+            }
+
+            $sql .= $record->table . " SET ";
+
+            foreach ($colomns as $colomn) {
+                $sql .= $colomn . " = '" . $record->$colomn . "', ";
+            }
+
+            $sql = rtrim($sql, ", ");
+            $sql .= $primaryKey;
+
+            $sth = $this->dbh->prepare($sql);
+            $sth->execute();
+
+            $this->dbh->commit();
+        } catch (Exception $exception) {
+            $this->dbh->rollBack();
+            echo $exception->getMessage();
         }
-
-        $sql .= $record->table . " SET ";
-
-        foreach ($colomns as $colomn) {
-            $sql .= $colomn . " = '" . $record->$colomn . "', ";
-        }
-
-        $sql = rtrim($sql, ", ");
-        $sql .= $primaryKey;
-
-        $sth = $this->dbh->prepare($sql);
-        $sth->execute();
 
         if (!$record->id) {
             return $this->dbh->lastInsertId();
@@ -105,8 +116,17 @@ class MysqlDriver implements DriverInterface
      */
     public function deleteRecord(object $record)
     {
-        $sql = "DELETE FROM " . $record->table . " WHERE id = " . $record->id;
-        $sth = $this->dbh->prepare($sql);
-        $sth->execute();
+        try {
+            $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->dbh->beginTransaction();
+
+            $sql = "DELETE FROM " . $record->table . " WHERE id = " . $record->id;
+            $sth = $this->dbh->prepare($sql);
+            $sth->execute();
+            $this->dbh->commit();
+        } catch (Exception $exception) {
+            $this->dbh->rollBack();
+            echo $exception->getMessage();
+        }
     }
 }
