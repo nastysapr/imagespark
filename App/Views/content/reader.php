@@ -1,4 +1,4 @@
-<?php (new View)->render('layout/header');
+<?php $this->render('layout/header', [], $breadcrumbs);
 $item = $pageData['item']; ?>
 
 <div class="header">
@@ -15,10 +15,10 @@ $item = $pageData['item']; ?>
 <span class="right"><i><?= $item->author ?></i></span>
 <br/>
 
-<?php if ($pageData['model'] === 'News') { ?>
+<?php if ($pageData['model'] === 'App\Models\News') { ?>
     <a href="/news">К списку новостей</a>
 <?php } else { ?>
     <a href="/articles">К списку статей</a>
 <?php } ?>
 
-<?php (new View)->render('layout/footer') ?>
+<?php $this->render('layout/footer') ?>

@@ -1,8 +1,10 @@
 <?php
+namespace App\Service;
+
+use Exception;
 
 class Router
 {
-    public array $routeProperties;
     public string $path;
     public array $routes;
     public string $requestMethod;
@@ -28,7 +30,7 @@ class Router
             $pattern = '/^' . str_replace('/', '\/', $pattern) . '$/';
 
             if (preg_match($pattern, $this->path, $matches)) {
-//                dd($matches);
+
                 if (isset($route->methods) && !in_array($this->requestMethod, $route->methods)) {
                     continue;
                 }

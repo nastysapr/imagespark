@@ -1,18 +1,14 @@
 <?php
 
-class Name extends Migration
+class Name
 {
-    public function up(): bool
+    public function up(): string
     {
-        $sql = "";
-
-        return $this->execute($sql);
+        return "";
     }
 
-    public function down(): bool
+    public function down(): string
     {
-        $sql = "";
-
-        return $this->execute($sql);
+        return "";
     }
 }

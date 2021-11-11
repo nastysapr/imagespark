@@ -1,4 +1,7 @@
 <?php
+namespace App\Service;
+
+use App\Models\User;
 
 /**
  * Отвечает за работу с сессией авторизованного пользователя
@@ -77,7 +80,7 @@ class Authorization
         if ($this->check()) {
             $id = (new Authorization())->getUserId();
             $user = (new User)->findByPK($id);
-            if ($user->role === $this::ROLE_ADMIN) {
+            if ($user->role === self::ROLE_ADMIN) {
                 return true;
             }
         }

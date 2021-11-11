@@ -1,4 +1,4 @@
-<?php (new View)->render('layout/header')?>
+<?php $this->render('layout/header', [], $breadcrumbs) ?>
 
 <h1>Новости</h1>
 <br>
@@ -16,5 +16,5 @@
 <br>
 <?php $pageData['pager']->show()?>
 
-<?php (new View)->render('layout/footer')?>
+<?php $this->render('layout/footer')?>
 

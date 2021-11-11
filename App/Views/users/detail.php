@@ -1,4 +1,4 @@
-<?php (new View)->render('layout/header');
+<?php $this->render('layout/header', [], $breadcrumbs);
 $user = $pageData['item']; ?>
 
     <div class="form">
@@ -65,7 +65,8 @@ $user = $pageData['item']; ?>
                                        value="<?php if (!$user->birthday) {
                                            echo date('Y-m-d');
                                        } else {
-                                           echo htmlspecialchars($user->birthday); } ?>"/></td>
+                                           echo htmlspecialchars($user->birthday);
+                                       } ?>"/></td>
                             <td><?php if (isset($pageData['errors']['birthday'])) { ?>
                                     <error><?= "Выберите другую дату" ?></error>
                                 <?php } ?></td>
@@ -89,4 +90,4 @@ $user = $pageData['item']; ?>
         </form>
     </div>
 
-<?php (new View)->render('layout/footer') ?>
+<?php $this->render('layout/footer') ?>

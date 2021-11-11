@@ -1,12 +1,20 @@
 <?php
 
+namespace App\Controllers;
+
+use App\Service\Authorization;
+use App\Service\Errors;
+use App\Service\Request;
+use App\Service\Validate;
+use App\Service\View;
+
 class Controller
 {
-    public $view;
-    public $errors;
-    public $request;
-    public $validate;
-    public $auth;
+    public View $view;
+    public Errors $errors;
+    public Request $request;
+    public Validate $validate;
+    public Authorization $auth;
     public int $limit = 10; //количество выводимых новостей/статей на странице
 
     public string $action;
@@ -21,13 +29,13 @@ class Controller
         $this->validate = new Validate();
         $this->auth = new Authorization();
 
-        foreach ($params as $key => $value){
+        foreach ($params as $key => $value) {
             $this->$key = $value;
         }
     }
 
     /**
-     * вызов детальной страницы новости/статьи/пользователя
+     * Вызов детальной страницы новости/статьи/пользователя
      */
     public function read(): void
     {
@@ -43,7 +51,7 @@ class Controller
     }
 
     /**
-     * Редактирование/создание новости/статьи
+     * Редактирование/создание новости/статьи/пользователя
      */
     public function edit(): void
     {
@@ -53,7 +61,12 @@ class Controller
             if (!$item) {
                 $this->errors->notFound();
             }
+            $action = 'Редактирование ' . $item->genitive;
+        } else {
+            $action = 'Создание ' . $item->genitive;
         }
+
+        $item->breadcrumbs = array_merge($item->breadcrumbs, ['' => $action]);
 
         $pageData['item'] = $item;
         $pageData['action'] = $this->action;
@@ -62,10 +75,12 @@ class Controller
         $errors = [];
 
         if (!empty($pageData['form_data'])) {
-            $validateMethod = strtolower($this->model);
+            $validateMethod = $item->table;
             $errors = $this->validate->$validateMethod($pageData['form_data']);
 
-            $pageData['form_data']['password'] = password_hash($pageData['form_data']['password'], PASSWORD_BCRYPT);
+            if (isset($pageData['form_data']['password'])) {
+                $pageData['form_data']['password'] = password_hash($pageData['form_data']['password'], PASSWORD_BCRYPT);
+            }
 
             foreach ($pageData['form_data'] as $attribute => $value) {
                 $item->$attribute = $value;
@@ -83,7 +98,7 @@ class Controller
 
         $pageData['errors'] = $errors;
 
-        $this->view->render($this->viewRedactor, $pageData);
+        $this->view->render($this->viewRedactor, $pageData, $item->breadcrumbs);
     }
 
     /**

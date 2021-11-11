@@ -1,5 +1,4 @@
-<?php (new View)->render('layout/header') ?>
-
+<?php $this->render('layout/header') ?>
     <h2>Последние новости</h2>
 <?php
 if ($pageData['news']) { ?>
@@ -31,5 +30,4 @@ if ($pageData['news']) { ?>
 <?php if ($auth->isAdmin()) { ?>
     <h2>Пользователи</h2><a href="/users">Перейти в закрытый раздел</a>
 <?php } ?>
-
-<?php (new View)->render('layout/footer') ?>
+<?php $this->render('layout/footer') ?>

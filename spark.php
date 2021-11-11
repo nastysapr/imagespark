@@ -1,4 +1,9 @@
 <?php
+
+use App\Service\ContentGenerator;
+use App\Service\Migration;
+use App\Service\Seeder;
+
 require_once 'App/Autoloader.php';
 Autoloader::register();
 

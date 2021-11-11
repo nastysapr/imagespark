@@ -1,4 +1,9 @@
 <?php
+namespace App\Models;
+
+use App\Service\Errors;
+use DateTime;
+use GlobIterator;
 
 class FilesDriver implements DriverInterface
 {
@@ -9,11 +14,13 @@ class FilesDriver implements DriverInterface
         $connectParams = require __DIR__ . '/../../config/db_config.php';
         $this->path = $connectParams['paths']['root'] . $connectParams['paths']['storage'];
     }
-
+    /**
+     * TODO!!!!
+     */
     /**
      * Подсчет записей в таблице
      */
-    public function count(string $table): int
+    public function count(string $table, string $filter): int
     {
         $directory = $this->path . $table . '/';
         $iterator = new GlobIterator($directory . '*');

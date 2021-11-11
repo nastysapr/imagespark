@@ -1,11 +1,15 @@
 <?php
+namespace App\Controllers;
+
+use App\Models\User;
+use App\Service\Authorization;
 
 /**
- * контроллер для работы с учетными записями пользователей
+ * Контроллер для работы с учетными записями пользователей
  */
 class UsersController extends Controller
 {
-    public string $model = 'User';
+    public string $model = 'App\Models\User';
     public string $viewDetail = 'users/detail';
     public string $viewRedactor = 'users/detail';
     public string $section = 'users';
@@ -19,7 +23,7 @@ class UsersController extends Controller
         $pageData['users'] = (new User())->findAll();
         sort($pageData['users']);
 
-        $this->view->render('users/index', $pageData);
+        $this->view->render('users/index', $pageData, ['' => 'Список пользователей']);
     }
 
     /**

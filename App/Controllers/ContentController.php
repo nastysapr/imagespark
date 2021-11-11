@@ -1,4 +1,7 @@
 <?php
+namespace App\Controllers;
+
+use App\Service\Pager;
 
 /**
  * Контроллер для работы со статьями и новостями
@@ -12,7 +15,7 @@ class ContentController extends Controller
     public function __construct(array $params)
     {
         parent::__construct($params);
-        $this->model = ucfirst($this->section);
+        $this->model = 'App\\Models\\' . ucfirst($this->section);
     }
 
     /**
@@ -21,21 +24,25 @@ class ContentController extends Controller
     public function index(): void
     {
         $items = new $this->model();
-        $where = '';
+        $filter = '';
 
-        if ($this->model === 'News') {
-            $where = "date";
+        if ($this->model === 'App\Models\News') {
+            $filter = "date";
         }
 
         $offset = $this->request->get('page', 1);
 
-        $pageData['items'] = $items->findAll($offset, $this->limit, $where);
+        $pageData['items'] = $items->findAll($offset, $this->limit, $filter);
         $pageData['model'] = $this->model;
 
-        $pager = new Pager($this->limit, $items->count());
-        $pager->setButtons();
+        $pager = null;
+        if ($items->count()) {
+            $pager = new Pager($this->limit, $items->count());
+            $pager->setButtons();
+        }
+
         $pageData['pager'] = $pager;
 
-        $this->view->render($this->viewIndex, $pageData);
+        $this->view->render($this->viewIndex, $pageData, ['' => 'Cписок ' . $items->plural]);
     }
 }

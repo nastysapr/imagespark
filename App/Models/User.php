@@ -1,6 +1,5 @@
 <?php
-//TODO:
-//hash password
+namespace App\Models;
 
 /**
  * Модель пользователя
@@ -8,6 +7,8 @@
 class User extends Model
 {
     public string $table = 'users';
+    public array $breadcrumbs = ['/users' => 'Список пользователей'];
+    public string $genitive = 'пользователя';
 
     /**
      * Сверяет введенные учетные данные с хранящимися в базе,
@@ -18,7 +19,6 @@ class User extends Model
         $users = (new User)->findAll();
 
         foreach ($users as $user) {
-            var_dump($user);
             if ($user->login === $loginData['login'] && password_verify($loginData['password'], $user->password)) {
                 return $user;
             }

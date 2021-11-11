@@ -1,8 +1,9 @@
 <?php
+namespace App\Models;
 
 interface DriverInterface
 {
-    public function count(string $table);
+    public function count(string $table, string $filter);
 
     public function save(object $record);
 

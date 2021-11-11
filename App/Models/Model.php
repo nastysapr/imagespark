@@ -1,4 +1,7 @@
 <?php
+namespace App\Models;
+
+use App\Service\Authorization;
 
 class Model
 {
@@ -43,7 +46,7 @@ class Model
      */
     public function save(): int
     {
-        if (!$this->role) {
+        if (get_called_class() === 'App\Models\User' && !$this->role) {
             $this->role = Authorization::ROLE_USER;
         }
         return self::$driver->save($this);
@@ -61,9 +64,9 @@ class Model
      * Возвращает массив объектов заданной размерности ($limit) из базы,
      * начиная с определенного смещения $offset. Если параметры не заданы, возвращает все записи
      */
-    public function findAll(int $offset = 0, int $limit = 0, string $where = ''): array
+    public function findAll(int $offset = 0, int $limit = 0, string $filter = null): array
     {
-        return self::$driver->findAll($this->table, get_called_class(), $where, $offset, $limit);
+        return self::$driver->findAll($this->table, get_called_class(), $filter, $offset, $limit);
     }
 
     /**
@@ -79,13 +82,18 @@ class Model
      */
     public function count(): int
     {
-        return self::$driver->count($this->table);
+        $filter = '';
+        if (get_called_class() === 'App\Models\News') {
+            $filter = 'date';
+        }
+
+        return self::$driver->count($this->table, $filter);
     }
 
     /**
      * Для новостей и статей возвращает свойство text
      */
-    public function getText(): string
+    public function getText(): ?string
     {
         return $this->text;
     }
@@ -93,7 +101,7 @@ class Model
     /**
      * Для новостей и статей возвращает короткий текст для анонса
      */
-    public function getShortText(int $length = 100): string
+    public function getShortText(int $length = 100): ?string
     {
         if (strlen($this->getText()) > $length) {
             $substring = substr($this->getText(), 0, $length + 1);

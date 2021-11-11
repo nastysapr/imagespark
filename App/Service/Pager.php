@@ -1,4 +1,5 @@
 <?php
+namespace App\Service;
 
 /**
  * выводит пагинатор в разделе новостей/статей
@@ -11,7 +12,7 @@ class Pager
     public int $totalPages;
     public int $totalButtons = 9;
     public array $buttons;
-    public int $offset;
+//    public int $offset;
 
     public function __construct(int $limit, int $total)
     {
@@ -22,7 +23,6 @@ class Pager
 
         if ($this->current > $this->totalPages) {
             (new Errors())->notFound();
-            exit;
         }
     }
 

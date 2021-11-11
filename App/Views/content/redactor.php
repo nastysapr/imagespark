@@ -1,6 +1,5 @@
-<?php (new View)->render('layout/header');
-$item = $pageData['item'];
-?>
+<?php $this->render('layout/header', [], $breadcrumbs);
+$item = $pageData['item'];?>
 
     <div class="form">
         <form action="" method="post" class="detail">
@@ -52,4 +51,4 @@ $item = $pageData['item'];
         </form>
     </div>
 
-<?php (new View)->render('layout/footer')?>
+<?php $this->render('layout/footer')?>

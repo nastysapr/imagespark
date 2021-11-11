@@ -1,4 +1,8 @@
 <?php
+
+use App\Models\MysqlDriver;
+use App\Models\FilesDriver;
+
 return [
     /** ['mysql', files] */
     'driver' => MysqlDriver::class,

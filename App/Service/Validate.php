@@ -1,11 +1,12 @@
 <?php
+namespace App\Service;
 
 /**
  * Класс валидации данных, заполняемых пользователем посредством форм
  */
 class Validate
 {
-    public function user(array $data): array
+    public function users(array $data): array
     {
         $errors = [];
         if (!preg_match("/^[A-Za-z0-9]+$/", $data['login'])) {

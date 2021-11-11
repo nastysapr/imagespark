@@ -1,3 +1,8 @@
+<?php
+
+use App\Service\Config;
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,9 +19,9 @@
     </a>
 </div>
 <?php if ($auth->check()) { ?>
-<figure class="text-center">
+    <figure class="text-center">
         <i>Добро пожаловать, <?= $auth->greetings() ?>!</i>
-</figure>
+    </figure>
 <?php } ?>
 
 <div class="login">
@@ -28,18 +33,15 @@
 </div>
 <header></header>
 <div class="breadcrumbs">
-    <!--    --><?php //if ($pageData['action'] != 'main') { ?>
-    <!--    <a href="/">Главная</a>-->
-    <!--    --><?php //if ($pageData['action'] == 'read') {
-    //        echo '→ Просмотр ';
-    //        } else {
-    //            if ($pageData['action'] == 'edit') {
-    //                echo '→ Редактирование ';
-    //            } else {
-    //                echo '→ Создание ';
-    //            }
-    //        }
-    //        echo $pageData['dictionary'][$pageData['entity']];
-    //    }
-    //    ?>
+    <?php if (isset($breadcrumbs)) { ?>
+        <a href="/">Главная</a>
+        <?php foreach ($breadcrumbs as $link => $breadcrumb) { ?>
+            →
+            <?php if ($link) { ?>
+                <a href="<?= $link ?>"> <?= $breadcrumb ?></a>
+            <?php } else { ?>
+                <?= $breadcrumb ?>
+            <?php }
+        }
+    } ?>
 </div>

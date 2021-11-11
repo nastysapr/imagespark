@@ -1,4 +1,7 @@
 <?php
+namespace App\Controllers;
+
+use App\Models\User;
 
 /**
  * Отвечает за авторизацию пользователей

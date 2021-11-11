@@ -1,5 +1,12 @@
 <?php
 
+namespace App\Models;
+
+use App\Service\Connect;
+use Exception;
+use PDO;
+use PDOException;
+
 class MysqlDriver implements DriverInterface
 {
     private PDO $dbh;
@@ -33,7 +40,7 @@ class MysqlDriver implements DriverInterface
     /**
      * Возвращает из базы записи в зависимости от параметров
      */
-    public function findAll(string $table, string $model, string $filter = '', int $offset = 0, int $limit = 0): array
+    public function findAll(string $table, string $model, string $filter = null, int $offset = 0, int $limit = 0): array
     {
         $sql = "SELECT * FROM " . $table;
 
@@ -54,9 +61,12 @@ class MysqlDriver implements DriverInterface
     /**
      * Подсчет записей в таблице
      */
-    public function count(string $table): int
+    public function count(string $table, string $filter): int
     {
         $sql = "SELECT COUNT(*) FROM " . $table;
+        if ($filter) {
+            $sql .= " WHERE CURDATE() - date <= 1 ";
+        }
         $sth = $this->dbh->prepare($sql);
         $sth->execute();
         return $sth->fetchColumn();
@@ -98,14 +108,14 @@ class MysqlDriver implements DriverInterface
             $sth = $this->dbh->prepare($sql);
             $sth->execute();
 
+            if (!$record->id) {
+                $record->id = $this->dbh->lastInsertId();
+            }
+
             $this->dbh->commit();
         } catch (Exception $exception) {
             $this->dbh->rollBack();
             echo $exception->getMessage();
-        }
-
-        if (!$record->id) {
-            return $this->dbh->lastInsertId();
         }
 
         return $record->id;

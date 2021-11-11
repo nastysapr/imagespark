@@ -1,4 +1,6 @@
-<?php (new View)->render('layout/header')?>
+<?php use App\Service\Authorization;
+
+$this->render('layout/header', [], $breadcrumbs); ?>
 
 <table id="users">
     <tr>
@@ -22,11 +24,11 @@
                 <a href="/users/<?= $user->id ?>/delete">
                     <i class="bi bi-trash-fill"></i>
                 </a>
-                <a href="/users/<?= $user->id ?>/role"><?php if ($user->role === Authorization::ROLE_ADMIN) {?>
-                    <i class="bi bi-person-check"></i>
-                <?php } else { ?>
-                    <i class="bi bi-person"></i>
-                <?php } ?>
+                <a href="/users/<?= $user->id ?>/role"><?php if ($user->role === Authorization::ROLE_ADMIN) { ?>
+                        <i class="bi bi-person-check"></i>
+                    <?php } else { ?>
+                        <i class="bi bi-person"></i>
+                    <?php } ?>
                 </a>
 
                 </div>
@@ -39,4 +41,4 @@
     Создать нового пользователя
 </a>
 
-<?php (new View)->render('layout/footer')?>
+<?php $this->render('layout/footer') ?>

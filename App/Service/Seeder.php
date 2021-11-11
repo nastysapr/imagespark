@@ -1,4 +1,9 @@
 <?php
+namespace App\Service;
+
+use GlobIterator;
+use PDO;
+use PDOException;
 
 class Seeder
 {
@@ -13,10 +18,10 @@ class Seeder
             die($ex->getMessage());
         }
     }
-
+//цикл, сколько создать записей
     public function seed(): void
     {
-        $directory = __DIR__ . '/../database/seeds/';
+        $directory = __DIR__ . '/../Database/seeds/';
         $iterator = new GlobIterator($directory . '*');
 
         foreach ($iterator as $fileName) {

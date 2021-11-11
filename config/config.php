@@ -1,4 +1,12 @@
 <?php
+
+use App\Controllers\AuthController;
+use App\Controllers\ContentController;
+use App\Controllers\UsersController;
+use App\Middleware\AdminMiddleware;
+use App\Middleware\UserMiddleware;
+use App\Service\Route;
+
 $entities = '(?P<controller>users|news|articles)';
 
 return [

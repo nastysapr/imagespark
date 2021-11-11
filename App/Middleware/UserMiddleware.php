@@ -1,4 +1,8 @@
 <?php
+namespace App\Middleware;
+
+use App\Service\Authorization;
+use Exception;
 
 class UserMiddleware
 {

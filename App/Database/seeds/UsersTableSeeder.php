@@ -2,6 +2,8 @@
 
 class UsersTableSeeder extends Seeder
 {
+    //проверка на наличие
+    //default
     public function seed(): void
     {
         $admin = new User();

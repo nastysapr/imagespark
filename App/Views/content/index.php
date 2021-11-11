@@ -1,17 +1,21 @@
-<?php (new View)->render('layout/header')?>
+<?php $this->render('layout/header', [], $breadcrumbs); ?>
 
-<?php if ($pageData['model'] === 'News') { ?>
+<?php if ($pageData['model'] === 'App\Models\News') { ?>
     <h1>Новости</h1>
 <?php } else { ?>
     <h1>Статьи</h1>
 <?php } ?>
 
-<br>
-<?php foreach ($pageData['items'] as $article) {?>
-    <a href="/articles/<?=$article->id ?>"><b><?=$article->title ?></b></a>
-    <p><?=$article->getShortText()?></p>
-<?php }?>
+    <br>
+<?php foreach ($pageData['items'] as $item) { ?>
+    <a href="/<?= $item->table ?>/<?= $item->id ?>"><b><?= $item->title ?></b></a>
+    <p><?= $item->getShortText() ?></p>
+<?php } ?>
 
-<?php $pageData['pager']->show()?>
+<?php if ($pageData['pager']) {
+    $pageData['pager']->show();
+} else { ?>
+    <p>Актуальных новостей нет</p>
+<?php } ?>
 
-<?php (new View)->render('layout/footer')?>
+<?php $this->render('layout/footer') ?>

@@ -1,5 +1,5 @@
-<?php (new View)->render('layout/header') ?>
-<!--password_hash-->
+<?php $this->render('layout/header', [], $breadcrumbs) ?>
+
 <form class="form-inline" method="post">
     <div class="form-group row">
         <label for="inputLogin" class="col-sm-2 col-form-label">Логин</label>
@@ -20,4 +20,5 @@
     <br>
     <error><?= $pageData['error'] ?></error>
 <?php } ?>
-<?php (new View)->render('layout/footer') ?>
+
+<?php $this->render('layout/footer') ?>

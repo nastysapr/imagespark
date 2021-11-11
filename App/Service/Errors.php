@@ -1,8 +1,9 @@
 <?php
+namespace App\Service;
 
 class Errors
 {
-    public $view;
+    public View $view;
 
     public function __construct()
     {
@@ -12,12 +13,6 @@ class Errors
     public function notFound()
     {
         $this->view->notFound();
-        exit();
-    }
-
-    public function forbidden()
-    {
-        $this->view->forbidden();
         exit();
     }
 

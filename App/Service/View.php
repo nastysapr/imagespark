@@ -1,8 +1,9 @@
 <?php
+namespace App\Service;
 
 class View
 {
-    public function render($view, $data = [])
+    public function render(string $view, array $data = null, array $breadcrumbs = null)
     {
         $pageData = [];
         $pageData = $data;
@@ -11,19 +12,13 @@ class View
         $auth = new Authorization();
 
         $path = Config::get()->value('paths.root') . Config::get()->value('paths.views');
-
         include $path . $view . '.php';
     }
 
     public function notFound()
     {
-        echo '<a href="/"><img src="/images/404.png"></a>';
+        $path = Config::get()->value('paths.root') . Config::get()->value('paths.views');
+        include $path . '404.php';
     }
 
-    public function forbidden()
-    {
-        $this->render('layout/header');
-        echo "<h1>Доступ запрещен</h1>";
-        $this->render('layout/footer');
-    }
 }
