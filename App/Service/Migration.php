@@ -78,7 +78,7 @@ class Migration
         foreach ($iterator as $fileName) {
             $migrationName = str_replace('.php', '', $fileName->getFilename());
 
-            include $this->directory . $fileName->getFilename();
+            require $this->directory . $fileName->getFilename();
 
             $migrationName = str_replace('.php', '', $fileName->getFilename());
             $className = preg_split('/m[\d]*_/', $migrationName);

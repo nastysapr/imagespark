@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service;
 
 use GlobIterator;
@@ -8,6 +9,7 @@ use PDOException;
 class Seeder
 {
     protected PDO $dbh;
+    public string $directory = __DIR__ . '/../Database/seeds/';
 
     public function __construct()
     {
@@ -18,15 +20,12 @@ class Seeder
             die($ex->getMessage());
         }
     }
-//цикл, сколько создать записей
-    public function seed(): void
-    {
-        $directory = __DIR__ . '/../Database/seeds/';
-        $iterator = new GlobIterator($directory . '*');
 
-        foreach ($iterator as $fileName) {
-            $className = str_replace('.php', '', $fileName->getFilename());
-            (new $className())->seed();
-        }
+//цикл, сколько создать записей
+    public function seed(string $table, int $count): void
+    {
+        $className = ucfirst($table) . 'TableSeeder';
+        require $this->directory . $className . '.php';
+        (new $className())->seed($count);
     }
 }

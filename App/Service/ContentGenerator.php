@@ -2,6 +2,8 @@
 namespace App\Service;
 
 use App\Models\User;
+use App\Models\News;
+use App\Models\Articles;
 
 class ContentGenerator
 {
@@ -12,12 +14,12 @@ class ContentGenerator
     {
         $this->dictionary = require ('__DIR__'. '/../config/gen_config.php');
 
-        $users = (new User)->all();
+        $users = (new User)->findAll();
         foreach ($users as $user){
             $authors[] = $user->full_name;
         }
 
-        $class = ucfirst($entity);
+        $class = 'App\Models\\' . ucfirst($entity);
 
         for ($i = 0; $i < $count; $i++) {
             $newEntity = new $class();
@@ -25,7 +27,7 @@ class ContentGenerator
             $newEntity->author = $authors[array_rand($authors)];
             $newEntity->text = $this->dictionary['text'][array_rand($this->dictionary['text'])];
             $newEntity->date = date("Y-m-d");
-            $newEntity->id = $newEntity->calcId();
+
             $newEntity->save();
         }
     }

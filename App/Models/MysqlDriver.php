@@ -44,8 +44,10 @@ class MysqlDriver implements DriverInterface
     {
         $sql = "SELECT * FROM " . $table;
 
-        if ($filter) {
+        if ($filter === 'date') {
             $sql .= " WHERE CURDATE() - date <= 1 ";
+        } elseif ($filter) {
+            $sql .= " WHERE login = '" . $filter . "'";
         }
 
         if ($limit) {

@@ -12,15 +12,27 @@ $longopts = [
     "count:",
     "migration:",
     "param:",
-    "seeder:"
+    "seeder:",
+    "help:"
 ];
 $options = getopt(0, $longopts);
+
+if (isset($options['help'])) {
+    echo "Migration:    --migration=create --param=new_migration_name\n";
+    echo "              --migration=migrate\n";
+    echo "              --migration=rollback --param=[all, (int) count]\n";
+    echo "Seeder:       --seeder=[users, news, articles]  --count=(int)'\n";
+    echo "Simple content generator:  --name=[news, articles] --count=\n";
+
+    return;
+}
+
 if (isset($options['name']) && !in_array($options['name'], ['news', 'articles']) ||
     isset($options['migration']) && !in_array($options['migration'], ['create', 'rollback', 'migrate']) ||
-    isset($options['seeder']) && $options['seeder'] !== 'seed') {
-    echo 'Unexpected parameter';
+    isset($options['seeder']) && !in_array($options['seeder'], ['users', 'news', 'articles'])) {
+    echo "Expected parameter";
 
-    return 0;
+    return;
 }
 
 $start = microtime(true);
@@ -42,7 +54,8 @@ if (isset($options['migration'])) {
  * Вызов сидера
  */
 if (isset($options['seeder'])) {
-    (new Seeder())->seed();
+    var_dump($options['seeder']);
+    (new Seeder())->seed($options['seeder'], $options['count']);
 }
 
 /**

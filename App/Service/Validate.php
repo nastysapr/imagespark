@@ -1,6 +1,8 @@
 <?php
 namespace App\Service;
 
+use App\Models\User;
+
 /**
  * Класс валидации данных, заполняемых пользователем посредством форм
  */
@@ -9,8 +11,12 @@ class Validate
     public function users(array $data): array
     {
         $errors = [];
-        if (!preg_match("/^[A-Za-z0-9]+$/", $data['login'])) {
+        if (!empty((new User)->findAll(0,0, $data['login']))) {
             $errors['login'] = true;
+        }
+
+        if (!preg_match("/^[A-Za-z0-9]+$/", $data['login'])) {
+            $errors['chars'] = true;
         }
 
         if (!preg_match("/^[A-Za-z0-9_\-.]+@[A-Za-z0-9_\-.]+.[A-Za-z]+$/", $data['email'])) {

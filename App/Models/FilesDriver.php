@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use App\Service\Errors;
@@ -74,7 +75,7 @@ class FilesDriver implements DriverInterface
         }
 
         if (!$limit) {
-            $limit = $this->count($table);
+            $limit = $this->count($table, $filter);
         }
 
         for ($count = 0; $count < $limit;) {
@@ -86,17 +87,20 @@ class FilesDriver implements DriverInterface
             $item = (new $model)->findByPK($id);
             $item->id = $id;
 
-            if ($filter) {
+            if ($filter === 'date') {
                 $dateDiff = date_diff(new DateTime(), DateTime::createFromFormat('Y-m-d', $item->date));
 
                 if ($dateDiff->days <= 1) {
                     $entitiesList[] = $item;
                     $count++;
                 }
-            } else {
+            } elseif ($item->login === $filter) {
                 $entitiesList[] = $item;
-                $count++;
+                return $entitiesList;
             }
+
+            $entitiesList[] = $item;
+            $count++;
 
             $iterator->next();
         }

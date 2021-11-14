@@ -15,7 +15,10 @@ $user = $pageData['item']; ?>
                                        value="<?= htmlspecialchars($user->login) ?>"/></td>
                             <td style="width:200px">
                                 <?php if (isset($pageData['errors']['login'])) { ?>
-                                    <error><?= "Только латинские буквы и цифры" ?></error>
+                                    <error><?= "Такой пользователь уже существует" ?></error>
+                                <?php } ?>
+                                <?php if (isset($pageData['errors']['chars'])) { ?>
+                                <error><?= "Только латинские буквы и цифры" ?></error>
                                 <?php } ?>
                             </td>
                         </tr>
