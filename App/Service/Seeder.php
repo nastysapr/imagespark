@@ -21,8 +21,7 @@ class Seeder
         }
     }
 
-//цикл, сколько создать записей
-    public function seed(string $table, int $count): void
+    public function seed(string $table, int $count = 0): void
     {
         $className = ucfirst($table) . 'TableSeeder';
         require $this->directory . $className . '.php';
