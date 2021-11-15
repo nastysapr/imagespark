@@ -11,7 +11,9 @@ class Validate
     public function users(array $data): array
     {
         $errors = [];
-        if (!empty((new User)->findAll(0,0, $data['login']))) {
+        $user = current((new User)->findAll(0,0, $data['login']));
+
+        if (!empty($user) && $user->id !== $data['id']) {
             $errors['login'] = true;
         }
 

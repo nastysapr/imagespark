@@ -72,9 +72,15 @@ class Controller
         $pageData['action'] = $this->action;
 
         $pageData['form_data'] = $this->request->getFormData();
+
+
         $errors = [];
 
         if (!empty($pageData['form_data'])) {
+            if ($item->id) {
+                $pageData['form_data']['id'] = $item->id;
+            }
+
             $validateMethod = $item->table;
             $errors = $this->validate->$validateMethod($pageData['form_data']);
 

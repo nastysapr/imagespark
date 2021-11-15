@@ -43,19 +43,23 @@ class MysqlDriver implements DriverInterface
     public function findAll(string $table, string $model, string $filter = null, int $offset = 0, int $limit = 0): array
     {
         $sql = "SELECT * FROM " . $table;
+        $bindParams = [];
 
         if ($filter === 'date') {
             $sql .= " WHERE CURDATE() - date <= 1 ";
         } elseif ($filter) {
-            $sql .= " WHERE login = '" . $filter . "'";
+            $sql .= " WHERE login = :login";
+            $bindParams["login"] = $filter;
         }
 
         if ($limit) {
-            $sql .= " LIMIT " . $limit . " OFFSET " . ($offset - 1) * $limit;
+            $sql .= " LIMIT :limit OFFSET :offset";
+            $bindParams["limit"] = $limit;
+            $bindParams["offset"] = ($offset - 1) * $limit;
         }
 
         $sth = $this->dbh->prepare($sql);
-        $sth->execute();
+        $sth->execute($bindParams);
 
         return $sth->fetchAll(PDO::FETCH_CLASS, $model);
     }
@@ -90,10 +94,12 @@ class MysqlDriver implements DriverInterface
         try {
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->dbh->beginTransaction();
+            $bindParams = [];
 
             if ($record->id) {
                 $sql = "UPDATE ";
-                $primaryKey = " WHERE id = " . $record->id;
+                $primaryKey = " WHERE id = :id";
+                $bindParams["id"] = $record->id;
             } else {
                 $sql = "INSERT INTO ";
             }
@@ -101,14 +107,15 @@ class MysqlDriver implements DriverInterface
             $sql .= $record->table . " SET ";
 
             foreach ($colomns as $colomn) {
-                $sql .= $colomn . " = '" . $record->$colomn . "', ";
+                $sql .= $colomn . " = :" . $colomn . ", ";
+                $bindParams[$colomn] = $record->$colomn;
             }
 
             $sql = rtrim($sql, ", ");
             $sql .= $primaryKey;
 
             $sth = $this->dbh->prepare($sql);
-            $sth->execute();
+            $sth->execute($bindParams);
 
             if (!$record->id) {
                 $record->id = $this->dbh->lastInsertId();
@@ -132,9 +139,9 @@ class MysqlDriver implements DriverInterface
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->dbh->beginTransaction();
 
-            $sql = "DELETE FROM " . $record->table . " WHERE id = " . $record->id;
+            $sql = "DELETE FROM " . $record->table . " WHERE id = :id";
             $sth = $this->dbh->prepare($sql);
-            $sth->execute();
+            $sth->execute(["id" => $record->id]);
             $this->dbh->commit();
         } catch (Exception $exception) {
             $this->dbh->rollBack();
