@@ -53,12 +53,10 @@ class MysqlDriver implements DriverInterface
         }
 
         if ($limit) {
-            $sql .= " LIMIT :limit OFFSET :offset";
-            $bindParams["limit"] = $limit;
-            $bindParams["offset"] = ($offset - 1) * $limit;
+            $sql .= " LIMIT " . $limit . " OFFSET " . ($offset - 1) * $limit;
         }
-
         $sth = $this->dbh->prepare($sql);
+
         $sth->execute($bindParams);
 
         return $sth->fetchAll(PDO::FETCH_CLASS, $model);
