@@ -106,7 +106,7 @@ class MysqlDriver implements DriverInterface
 
             foreach ($colomns as $colomn) {
                 $sql .= $colomn . " = :" . $colomn . ", ";
-                $bindParams[$colomn] = $record->$colomn;
+                $bindParams[$colomn] = htmlspecialchars($record->$colomn);
             }
 
             $sql = rtrim($sql, ", ");
