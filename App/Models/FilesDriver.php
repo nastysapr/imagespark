@@ -64,7 +64,7 @@ class FilesDriver implements DriverInterface
     /**
      * Возвращает из базы записи в зависимости от параметров
      */
-    public function findAll(string $table, string $model, string $filter = '', int $offset = 0, int $limit = 0): array
+    public function findAll(string $table, string $model, string $filter = '', string $column = null, int $offset = 0, int $limit = 0): array
     {
         $directory = $this->path . $table . '/';
         $iterator = new GlobIterator($directory . '*');

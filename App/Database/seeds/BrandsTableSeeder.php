@@ -6,7 +6,7 @@ class BrandsTableSeeder
 {
     public array $brands = ['BAUER', 'CCM', 'Easton', 'Graf', 'GRIT', 'Jofa', 'KOHO', 'Mad Guy',
         'Montreal', 'NBH', 'OAKLEY', 'OXDOG', 'Pallas', 'RBK', 'Reebok', 'SSM', 'Salming', 'Sher-Wood',
-        'TAC', 'TPS', 'Tackla', 'Torspo', 'Vegum', 'Viking', 'Wall'];
+        'TPS', 'Tackla', 'Torspo', 'Vegum', 'Viking', 'Wall', 'TAC'];
 
     public function seed(): void
     {

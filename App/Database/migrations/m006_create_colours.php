@@ -9,6 +9,8 @@ class CreateColours
             alias varchar(255) NOT NULL,
             alias_english varchar(255),
             alias_short varchar(255),
+            alias_feminitive varchar(255),
+            alias_plural varchar(255),
             PRIMARY KEY (id))";
     }
 

@@ -64,9 +64,9 @@ class Model
      * Возвращает массив объектов заданной размерности ($limit) из базы,
      * начиная с определенного смещения $offset. Если параметры не заданы, возвращает все записи
      */
-    public function findAll(int $offset = 0, int $limit = 0, string $filter = null): array
+    public function findAll(int $offset = 0, int $limit = 0, string $filter = null, string $column = null): array
     {
-        return self::$driver->findAll($this->table, get_called_class(), $filter, $offset, $limit);
+        return self::$driver->findAll($this->table, get_called_class(), $filter, $column, $offset, $limit);
     }
 
     /**

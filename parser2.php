@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Colours;
+use App\Models\Goods;
 use App\Service\Migration;
 use App\Service\Seeder;
+use App\Models\Brands;
+use App\Models\Categories;
 
 require_once 'App/Autoloader.php';
 Autoloader::register();
@@ -12,40 +16,150 @@ Autoloader::register();
 //(new Migration())->create('create_goods');
 
 //(new Migration())->migrate();
-(new Seeder())->seed('brands');
+//(new Migration())->rollback(3);
+//(new Seeder())->seed('categories');
+//(new Seeder())->seed('colours');
 
-ini_set('auto_detect_line_endings',TRUE);
-$handle = fopen('test.csv','r');
-while (($data = fgetcsv($handle) ) !== FALSE) {
-    $data = str_replace('"', '', $data);
-    //var_dump(current($data));
+//(new Migration())->rollback(2);
+//(new \App\Service\GoodsParser())->prepareBase();
+(new \App\Service\GoodsParser())->parseFile();
+exit;
+ini_set('auto_detect_line_endings', TRUE);
+
+$brands = (new Brands())->findAll();
+//var_dump($brands);
+$regBrands = [];
+foreach ($brands as $brand) {
+    $regBrands[$brand->id] = $brand->alias;
 }
-ini_set('auto_detect_line_endings',FALSE);
+//var_dump($regBrands);
+$regBrandsString = implode('|', $regBrands);
+//var_dump($regBrandsString);
+//exit;
+$categories = new Categories();
+$colours = (new Colours())->findAll();
+//$catList = $categories->findAll();
 
+//прошла по файлу, получила подкатегории
+//$handle = fopen('test.csv', 'r');
+//while (($data = fgetcsv($handle)) !== FALSE) {
+//    $data = current(str_replace('"', '', $data));
+//    $categories->addSubcategories($data);
+//}
 
-//    '/^(?P<type>[а-яА-Я\s]+)\s+(?P<brand>[a-zA-Z]+)\s+(?P<description>[а-яА-Я\s\.\(\)]+)\s+(?P<model>[a-zA-Z\s]+)\s+(?P<size>[a-zA-Z0-9]+)\s+(?P<age>[A-Z]*)\s*\(\s*(?P<vendor_code>)\S\d+\s*|\d+\s*\)$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<vendor_code>)\S\d+|\d+\)\s+(?P<type>[а-яА-Я\s]+)\s+(?P<description>[а-яА-Я\s\.\(\)]+)\s+(?P<model>[a-zA-Z\s]+)\s+(?P<age>[A-Z]+)\s+(?P<colour>[а-яА-Я]+)\s+-\s+(?P<size>[A-Z]+)$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<type>[а-яА-Я\s]+)\s+(?P<description>[а-яА-Я\s\.\(\)]+)\s+(?P<model>[a-zA-Z\s]+)\s+(?P<code>\d+)\s(?P<colour>[а-яА-Я\/-]+)\s+-\s+(?P<size>[A-Z]+)$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<type>[а-яА-Я]+)\s+(?P<description>[а-яА-Я\s\.\(\)]+)\s+(?P<model>[a-zA-Z\s]+)\s+(?P<code>\d+)\s+\((?P<colour>[а-я\/-]+)\)\s+-\s+(?P<size>[A-Z]+)$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<type>[а-яА-Я]+)\s+(?P<description>[а-яА-Я\s\.\(\)]+)\s+(?P<model>[a-zA-Z\s]+)\s+(?P<code>\d+)\s+(?P<colour>[а-я\/-]+)\s+-\s+(?P<size>\d+)$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<type>[а-яА-Я]+)\s+(?P<description>[а-яА-Я]+)\s+(?P<model>[a-zA-Z\d]+)\s+(?P<code>[A-Z\d]*)\s*(?P<age>[A-Z]*)\s*(?P<rigidity>[a-zA-Z]*)\s*(?P<length>\d*)\s*\((?P<bend>[A-Z]\d+)\)\s+-\s+(?P<grip>[A-Z])$/u',
-//    '/^(?P<type>[а-яА-Я]+)\s+(?P<brand>[a-zA-Z]+)\s+(?P<description>.*)\s+(?P<size>\d+)\s+(?P<colour>[a-zA-Z]*)\s*(?P<age>[A-Z]+)\s*$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<type>[а-яА-Я\s]+)\s+(?P<description>[А-Яа-я]+)\s+(?P<model>[a-zA-Z\s]+)\s+(?P<colour>[а-яА-Я]+)\s-\s+(?P<size>[A-Z]+)$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<type>[а-яА-Я\s]+)\s+(?P<model>[a-zA-Z\s]+)-\s+(?P<size>[A-Z]+)$/u',
-//    '/^(?P<brand>[a-zA-Z]+)\s+(?P<type>[а-яА-Я\s]+)\s+(?P<description>[А-Яа-я]+)\s+(?P<code>\d+)\s+(?P<model>[a-zA-Z\s]+)\s*-\s*(?P<size>[0-9\.,]+)$/u',
-//    '/^(?P<type>[а-яА-Я]+)\s+(?P<description>[А-Яа-я]+)\s+(?P<brand>[a-zA-Z]+)\s*(?P<model>[a-zA-Z\s\d]*)\s*-\s*(?P<size>[\d\.,]+)$/u',
-//    '/^(?P<type>[а-яА-Я\s]+)\s+(?P<age>[A-Z]+|[A-Z]+\s[а-я]+|[а-я]+)\s*(?P<model>[а-яА-Я]*)\s*(?P<colour>[а-яА-Я\.,\/-]*)\s*(?P<model1>[A-Za-z]*)$/u',
-
-//
-//foreach ($data as $key => $item) {
-//    foreach ($patterns as $pattern) {
-//        if (preg_match($pattern, $item, $matches)) {
-//            $count++;
-//            unset($data[$key]);
-//
-//            break;
-//        }
+//прошла по файлу, получила составные цвета
+//$handle = fopen('test.csv', 'r');
+//$colours = [];
+//while (($data = fgetcsv($handle)) !== FALSE) {
+//    $data = current(str_replace('"', '', $data));
+//    $pattern = '/(?P<colour>[а-я\.-]+\/[а-я\.-]+\/*[а-я\.-]*)/u';
+//    if (preg_match($pattern, $data, $matches)) {
+//        if(!in_array($matches['colour'], $colours))
+//        $colours[] = $matches['colour'];
 //    }
 //}
-//file_put_contents('result.csv', $data);
-//echo "$count\n";
+//
+//foreach ($colours as $key => $value) {
+//    $colour = new Colours();
+//    $colour->alias = $value;
+//    $colour->save();
+//}
+//(new Migration())->create('create_sizes');
+exit;
+
+$handle = fopen('test.csv', 'r');
+$result = fopen('result.csv', 'w');
+
+while (($data = fgetcsv($handle)) !== FALSE) {
+    $data = current(str_replace('"', '', $data));
+    $data = str_replace('  ', ' ', $data);
+    $item = new Goods;
+    //поиск цвета
+    foreach ($colours as $colour) {
+        foreach ($colour->attributes as $key => $value) {
+            if ($key === 'id') {
+                continue;
+            }
+
+            $pattern = '/\s(?P<colour>' . preg_quote($value, '/') . ')[\s|\$]/iu';
+            if ($value && preg_match($pattern, $data, $matches)) {
+                $item->colour_id = $colour->attributes['id'];
+                $data = preg_replace($pattern, '', $data);
+//                $data = str_replace($matches['colour'], '', $data);
+                break;
+            }
+        }
+    }
+//поиск артикля
+    $pattern = '/(?P<vendorCode>\w{0,}\d{7,}\w{0,})/u';
+
+    if (preg_match($pattern, $data, $matches)) {
+        $item->vendor_code = $matches['vendorCode'];
+//        $data = str_replace($matches['vendorCode'], '', $data);
+        $data = preg_replace($pattern, '', $data);
+    }
+    //поиск производителя
+    $pattern = '/(?P<brand>' . $regBrandsString . ')/iu';
+    if (preg_match($pattern, $data, $matches)) {
+//TODO brand_id
+        $key = array_search($matches['brand'], $regBrands);
+        if ($key) {
+            $item->brand = $key;
+            $data = preg_replace($pattern, '', $data);
+//            $data = str_ireplace($matches['brand'], '', $data);
+            $data = trim($data, " ");
+            //var_dump($data);
+        }
+    }
+//поиск категории
+    $pattern = '/(?P<category>[а-яА-Я\s]+)/iu';
+    if (preg_match($pattern, $data, $matches)) {
+        $category = (new Categories())->findAll(0, 0, mb_strtolower(trim($matches['category'], " ")), 'alias');
+        if (!empty($category)) {
+            $category = current($category);
+            $item->catalog_id = $category->id;
+            $data = str_ireplace(trim($matches['category'], " "), '', $data);
+
+            //заполнение ориентации для клюшек
+            if ($category->parent_id) {
+                $parent = (new Categories())->findByPK($category->parent_id);
+                if ($parent->alias === "клюшка") {
+                    $pattern = '/-\s*(?P<orientation>L|R)$/u';
+                    if (preg_match($pattern, $data, $matches)) {
+                        $item->orientation = $matches['orientation'];
+                        $data = preg_replace($pattern, '', $data);
+//                        $data = str_ireplace($matches['orientation'], '', $data);
+                    }
+                }
+            }
+            $data = trim($data, " ");
+        }
+    }
+
+//поиск размера
+    $pattern = '/-\s*(?P<size>[A-Z]+|[\d.,]+)\s*$/u';
+    if (preg_match($pattern, $data, $matches)) {
+        $item->size = $matches['size'];
+        $data = preg_replace($pattern, '', $data);
+//        $data = str_ireplace($matches['size'], '', $data);
+        $data = trim($data, " ");
+    }
+
+    //Расчет модели товаров
+    $data = preg_replace('/\s*-$/', '', $data);
+    $data = preg_replace('/^-/', '', $data);
+    $data = preg_replace('/\(\)/', '', $data);
+    $data = preg_replace('/s{2,}/', ' ', $data);
+    $data = trim($data, ' ');
+//    var_dump($data);
+    $item->model = $data;
+
+    if ($item->catalog_id) {
+        $item->save();
+    } else {
+        fputcsv($result, [$data], "\n");
+    }
+}
+fclose($result);
+ini_set('auto_detect_line_endings', FALSE);
+

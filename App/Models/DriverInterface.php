@@ -11,5 +11,5 @@ interface DriverInterface
 
     public function findRecordByPK(string $table, string $model, int $id);
 
-    public function findAll(string $table, string $model, string $filter = '', int $offset = 0, int $limit = 0);
+    public function findAll(string $table, string $model, string $filter = '', string $column = null, int $offset = 0, int $limit = 0);
 }

@@ -7,19 +7,18 @@ class CreateGoods
         return "CREATE TABLE goods (
             id int AUTO_INCREMENT,
             catalog_id int NOT NULL,
-            vendor_code varchar(255),
-            brand varchar(255),
-            model varchar(255),
-            name varchar(255) NOT NULL,
-            size varchar(255),
-            colour_id int,
-            orientation char,
+            vendor_code varchar(45) DEFAULT NULL,
+            brand_id int DEFAULT NULL,
+            model varchar(255) DEFAULT NULL,
+            size varchar(45) DEFAULT NULL,
+            colour_id int DEFAULT NULL,
+            orientation char DEFAULT NULL,
             PRIMARY KEY (id))";
     }
 
     public function down(): string
     {
-        return "";
+        return "DROP TABLE goods";
     }
 }
 

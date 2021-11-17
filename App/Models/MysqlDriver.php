@@ -40,16 +40,16 @@ class MysqlDriver implements DriverInterface
     /**
      * Возвращает из базы записи в зависимости от параметров
      */
-    public function findAll(string $table, string $model, string $filter = null, int $offset = 0, int $limit = 0): array
+    public function findAll(string $table, string $model, string $filter = null, string $column = null, int $offset = 0, int $limit = 0): array
     {
         $sql = "SELECT * FROM " . $table;
         $bindParams = [];
 
         if ($filter === 'date') {
             $sql .= " WHERE CURDATE() - date <= 1 ";
-        } elseif ($filter) {
-            $sql .= " WHERE login = :login";
-            $bindParams["login"] = $filter;
+        } elseif ($column) {
+            $sql .= " WHERE " . $column . " = :" . $column;
+            $bindParams[$column] = $filter;
         }
 
         if ($limit) {
@@ -91,6 +91,7 @@ class MysqlDriver implements DriverInterface
 
         try {
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->dbh->setAttribute (PDO::ATTR_EMULATE_PREPARES, false);
             $this->dbh->beginTransaction();
             $bindParams = [];
 
