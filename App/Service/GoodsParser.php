@@ -6,6 +6,8 @@ use App\Models\Brands;
 use App\Models\Categories;
 use App\Models\Colours;
 use App\Models\Goods;
+use App\Models\Orientations;
+use App\Models\Sizes;
 
 class GoodsParser
 {
@@ -19,16 +21,15 @@ class GoodsParser
         $seeder->seed('colours');
         $seeder->seed('brands');
         $seeder->seed('sizes');
+        $seeder->seed('orientations');
 
-        //Получение подкатегорий и составных цветов из файла
+        //Получение подкатегорий
         $handle = fopen($this->sourceFile, 'r');
         $categories = new Categories();
-        $colours = new Colours();
 
         while (($data = fgetcsv($handle)) !== FALSE) {
             $data = current(str_replace('"', '', $data));
             $categories->addSubcategories($data);
-            //$colours->addMultiColours($data);
         }
     }
 
@@ -57,7 +58,6 @@ class GoodsParser
             }
         }
 
-        ksort($regColours);
         $regColoursString = implode('|', array_map(function ($value) {
             return $value['alias'];
         }, $regColours));
@@ -69,9 +69,9 @@ class GoodsParser
             $categoriesList[] = ['alias' => $category->alias, 'id' => $category->id, 'parentId' => $category->parent_id];
         }
 
-        $regCategoriesString = implode('|', array_map(function ($value) {
-            return $value['alias'];
-        }, $categoriesList));
+        $orientation = (new Orientations())->findAll();
+
+        $sizes = (new Sizes())->findAll();
 
         $handle = fopen('test.csv', 'r');
         $result = fopen('result.csv', 'w');
@@ -80,19 +80,22 @@ class GoodsParser
             $data = current(str_replace('"', '', $data));
             $data = str_replace('  ', ' ', $data);
             $item = new Goods;
-            $item->colour_id = 0;
-            $item->brand_id = 0;
-
+//            $item->colour_id = null;
+//            $item->brand_id = null;
+//var_dump($item);
             //Поиск цвета
             $pattern = '/(?P<colour>[а-я\.-]+\/[а-я\.-]+\/*[а-я\.-]*)/u';
             if (preg_match($pattern, $data, $matches)) {
-                $item->colour_id = array_search('разноцветный', array_map(function ($value) {
-                    return $value['alias'];}, $regColours));
+                $key = array_search('разноцветный', array_map(function ($value) {
+                    return $value['alias'];
+                }, $regColours));
+                $item->colour_id = $regColours[$key]['id'];
             } else {
                 $pattern = '/\s(?P<colour>' . $regColoursString . ')[\s|.|$]/u';
                 if (preg_match($pattern, $data, $matches)) {
                     $key = array_search($matches['colour'], array_map(function ($value) {
-                        return $value['alias'];                    }, $regColours));
+                        return $value['alias'];
+                    }, $regColours));
                     if ($key !== 'false') {
                         $item->colour_id = $regColours[$key]['id'];
                         $data = str_ireplace($matches['colour'], '', $data);
@@ -121,29 +124,41 @@ class GoodsParser
             }
 
             //Поиск категории
-            $pattern = '/(?P<category>' . $regCategoriesString . ')/iu';
+            //$pattern = '/(?P<category>' . $regCategoriesString . ')/iu';
+            $pattern = '/(?P<category>(\s*[а-я]+\s*){1,})/iu';
             if (preg_match($pattern, $data, $matches)) {
-                $matches['category'] = mb_strtolower(trim($matches['category'], ' '));
-                $key = array_search($matches['category'], array_map(function ($value) {
+                $matches['category'] = trim($matches['category'], ' ');
+
+                $key = array_search(mb_strtolower($matches['category']), array_map(function ($value) {
                     return $value['alias'];
                 }, $categoriesList));
 
                 if ($key !== 'false') {
-                    $item->catalog_id = $categoriesList[$key]['id'];
-                    //$data = str_ireplace($matches['category'], '', $data);
-                    $data = preg_replace($pattern, '', $data);
+                    //var_dump($categoriesList[$key]['id']);
+                    $item->category_id = $categoriesList[$key]['id'];
+                    $data = str_ireplace($matches['category'], '', $data);
+                    //$data = preg_replace($pattern, '', $data);
+
                     //заполнение ориентации для клюшек
                     $parentId = $categoriesList[$key]['parentId'];
-                    $needle = array_search('клюшка', array_map(function ($value) {
+                    $key = array_search('клюшка', array_map(function ($value) {
                         return $value['alias'];
                     }, $categoriesList));
-                    if ($parentId == $needle || $item->catalog_id == $needle) {
-                        $pattern = '/(?P<orientation>L|R)$/';
+                    $needle = $categoriesList[$key]['id'];
+
+                    if ($parentId == $needle || $item->category_id == $needle) {
+                        //var_dump($needle);
+                        $pattern = '/(?P<orientation>[L|R])$/';
                         if (preg_match($pattern, $data, $matches)) {
-                            $item->orientation = $matches['orientation'];
+                            $key = array_search($matches['orientation'], array_map(function ($value) {
+                                return $value->alias;
+                            }, $orientation));
+                            $item->orientation_id = ($orientation[$key])->id;
+//var_dump($item->orientation_id);
                             $data = preg_replace($pattern, '', $data);
                         }
                     }
+
                     $data = trim($data, " ");
                 }
             }
@@ -151,7 +166,14 @@ class GoodsParser
             //Поиск размера
             $pattern = '/-\s*(?P<size>[A-Z]+|[\d.,]+)\s*$/u';
             if (preg_match($pattern, $data, $matches)) {
-                $item->size = $matches['size'];
+                $key = array_search($matches['size'], array_map(function ($value) {
+                    return $value->alias;
+                }, $sizes));
+//var_dump($sizes);
+                if ($key) {
+                    $item->size_id = ($sizes[$key])->id;
+                }
+
                 $data = preg_replace($pattern, '', $data);
                 $data = trim($data, " ");
             }
@@ -165,8 +187,8 @@ class GoodsParser
 
             $item->model = $data;
 //var_dump($item);
-            if ($item->catalog_id) {
-  //              $item->save();
+            if ($item->category_id) {
+                $item->save();
             } else {
                 fputcsv($result, [$data], "\n");
             }

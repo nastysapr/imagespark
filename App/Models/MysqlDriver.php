@@ -40,16 +40,21 @@ class MysqlDriver implements DriverInterface
     /**
      * Возвращает из базы записи в зависимости от параметров
      */
-    public function findAll(string $table, string $model, string $filter = null, string $column = null, int $offset = 0, int $limit = 0): array
+//    public function findAll(string $table, string $model, string $filter = null, string $column = null, int $offset = 0, int $limit = 0): array
+    public function findAll(string $table, string $model, string $filter = null, array $column = null, int $offset = 0, int $limit = 0): array
     {
         $sql = "SELECT * FROM " . $table;
         $bindParams = [];
 
         if ($filter === 'date') {
             $sql .= " WHERE CURDATE() - date <= 1 ";
-        } elseif ($column) {
-            $sql .= " WHERE " . $column . " = :" . $column;
-            $bindParams[$column] = $filter;
+        } elseif (!empty($column)) {
+            $sql .= " WHERE ";
+            foreach ($column as $key => $value) {
+                $sql .= $key . " = :" . $key . " AND ";
+                $bindParams[$key] = $value;
+            }
+            $sql = rtrim($sql, " AND ");
         }
 
         if ($limit) {
@@ -79,7 +84,7 @@ class MysqlDriver implements DriverInterface
     /**
      * Сохраняет объект в базе
      */
-    public function save(object $record): int
+    public function save(Model $record): int
     {
         $sql = "SHOW COLUMNS FROM " . $record->table;
         $sth = $this->dbh->prepare($sql);
@@ -105,10 +110,11 @@ class MysqlDriver implements DriverInterface
 
             $sql .= $record->table . " SET ";
 
-            foreach ($colomns as $colomn) {
-                $sql .= $colomn . " = :" . $colomn . ", ";
-                $bindParams[$colomn] = htmlspecialchars($record->$colomn);
+            foreach ($colomns as $column) {
+                $sql .= $column . " = :" . $column . ", ";
+                $bindParams[$column] = $record->$column;
             }
+
 
             $sql = rtrim($sql, ", ");
             $sql .= $primaryKey;

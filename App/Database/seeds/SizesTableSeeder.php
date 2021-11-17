@@ -16,6 +16,7 @@ class SizesTableSeeder
         foreach ($this->sizes as $size) {
             $item = new Sizes();
             $item->alias = $size;
+            $item->category_id = 0;
             $item->save();
         }
     }

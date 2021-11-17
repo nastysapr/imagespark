@@ -73,7 +73,6 @@ class Controller
 
         $pageData['form_data'] = $this->request->getFormData();
 
-
         $errors = [];
 
         if (!empty($pageData['form_data'])) {
@@ -89,7 +88,7 @@ class Controller
             }
 
             foreach ($pageData['form_data'] as $attribute => $value) {
-                $item->$attribute = $value;
+                $item->$attribute = htmlspecialchars($value);
             }
 
             if (empty($errors)) {

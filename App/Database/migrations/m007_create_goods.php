@@ -6,13 +6,13 @@ class CreateGoods
     {
         return "CREATE TABLE goods (
             id int AUTO_INCREMENT,
-            catalog_id int NOT NULL,
+            category_id int NOT NULL,
             vendor_code varchar(45) DEFAULT NULL,
             brand_id int DEFAULT NULL,
             model varchar(255) DEFAULT NULL,
-            size varchar(45) DEFAULT NULL,
+            size_id varchar(45) DEFAULT NULL,
             colour_id int DEFAULT NULL,
-            orientation char DEFAULT NULL,
+            orientation_id int DEFAULT NULL,
             PRIMARY KEY (id))";
     }
 

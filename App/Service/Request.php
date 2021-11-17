@@ -29,5 +29,14 @@ class Request
         return [];
     }
 
+    public function getFilterParams(): array
+    {
+        if (isset($_GET)) {
+            return $_GET;
+        }
+
+        return [];
+    }
+
 
 }

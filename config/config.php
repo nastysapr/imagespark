@@ -2,6 +2,7 @@
 
 use App\Controllers\AuthController;
 use App\Controllers\ContentController;
+use App\Controllers\GoodsController;
 use App\Controllers\UsersController;
 use App\Middleware\AdminMiddleware;
 use App\Middleware\UserMiddleware;
@@ -31,6 +32,8 @@ return [
         '/(?P<section>news|articles)/(?P<id>\d+)/(?P<action>edit)' => new Route(ContentController::class, 'edit', ['GET', 'POST'], AdminMiddleware::class),
         '/(?P<section>login)' => new Route(AuthController::class, 'login', ['GET', 'POST']),
         '/(?P<section>logout)' => new Route(AuthController::class, 'logout', ['GET']),
+
+        '/(?P<section>goods)' => new Route(GoodsController::class, 'index', ['GET']),
     ]
 ];
 
